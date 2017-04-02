@@ -1,0 +1,16 @@
+{
+	"name": "delight-im/temporal",
+	"description": "Immutable date and time for PHP with a convenient interface",
+	"require": {
+		"php": ">=5.6.0"
+	},
+	"type": "library",
+	"keywords": [ "date", "time", "datetime", "date-time", "manipulation", "parse", "format", "manipulate", "parsing", "formatting", "immutable" ],
+	"homepage": "https://github.com/delight-im/PHP-Temporal",
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"Delight\\Temporal\\": "src/"
+		}
+	}
+}
