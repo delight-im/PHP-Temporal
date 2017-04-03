@@ -38,7 +38,7 @@ Immutable date and time for PHP with a convenient interface
  * [Checking for daylight saving time (DST)](#checking-for-daylight-saving-time-dst)
  * [Checking for leap years](#checking-for-leap-years)
  * [Checking for special dates](#checking-for-special-dates)
- * [Calculating differences between instances of date and time](#calculating-differences-between-instances-of-date-and-time)
+ * [Calculating differences between two instances of date and time](#calculating-differences-between-two-instances-of-date-and-time)
  * [Reading and writing durations of date and time](#reading-and-writing-durations-of-date-and-time)
  * [Comparing instances of date and time with each other](#comparing-instances-of-date-and-time-with-each-other)
    * [Equality](#equality)
@@ -457,7 +457,7 @@ $dateTime->isLastMillennium();
 $dateTime->isNextMillennium();
 ```
 
-### Calculating differences between instances of date and time
+### Calculating differences between two instances of date and time
 
 ```php
 $dateTime->calculateMillisUntil($otherDateTime);
