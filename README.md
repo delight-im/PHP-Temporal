@@ -130,12 +130,6 @@ $dateTime = \Delight\Temporal\Temporal::yesterday('America/Los_Angeles');
 
 // or
 
-$dateTime = \Delight\Temporal\Temporal::today();
-// or
-$dateTime = \Delight\Temporal\Temporal::today('Asia/Tokyo');
-
-// or
-
 $dateTime = \Delight\Temporal\Temporal::tomorrow();
 // or
 $dateTime = \Delight\Temporal\Temporal::tomorrow('America/Los_Angeles');
