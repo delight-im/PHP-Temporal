@@ -35,7 +35,7 @@ Immutable date and time for PHP with a convenient interface
  * [Skipping to boundaries of date and time units](#skipping-to-boundaries-of-date-and-time-units)
  * [Formatting and outputting date and time](#formatting-and-outputting-date-and-time)
  * [Fetching decades, centuries and millennia from dates](#fetching-decades-centuries-and-millennia-from-dates)
- * [Checking for daylight saving time (DST)](#checking-for-daylight-saving-time-DST)
+ * [Checking for daylight saving time (DST)](#checking-for-daylight-saving-time-dst)
  * [Checking for leap years](#checking-for-leap-years)
  * [Checking for special dates](#checking-for-special-dates)
  * [Calculating differences between instances of date and time](#calculating-differences-between-instances-of-date-and-time)
