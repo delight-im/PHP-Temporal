@@ -124,6 +124,12 @@ $dateTime = \Delight\Temporal\Temporal::fromFormat('20.07.1969', 'd.m.Y', 'Asia/
 
 // or
 
+$dateTime = \Delight\Temporal\Temporal::fromDateTimeInterface(new \DateTime());
+// or
+$dateTime = \Delight\Temporal\Temporal::fromDateTimeInterface(new \DateTimeImmutable());
+
+// or
+
 $dateTime = \Delight\Temporal\Temporal::yesterday();
 // or
 $dateTime = \Delight\Temporal\Temporal::yesterday('America/Los_Angeles');
@@ -349,6 +355,12 @@ $dateTime->toUnixMillis();
 $dateTime->toFormat('d.m.Y');
 // or
 $dateTime->toFormat('l jS \of F Y h:i:s A');
+
+// or
+
+$dateTime->toDateTime();
+// or
+$dateTime->toDateTimeImmutable();
 ```
 
 ### Fetching decades, centuries and millennia from dates

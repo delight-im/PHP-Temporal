@@ -35,6 +35,8 @@ $yesterday = \Delight\Temporal\Temporal::yesterday();
 $quarterPastMidnight = \Delight\Temporal\Temporal::fromTime(0, 15, 0);
 $tomorrow = \Delight\Temporal\Temporal::tomorrow();
 $problem2038 = \Delight\Temporal\Temporal::fromDateTime(2038, 1, 18, 19, 14, 7);
+$plainDateTime = new \DateTime();
+$plainDateTimeImmutable = new \DateTimeImmutable();
 
 assertSame((string) \Delight\Temporal\Temporal::now(), '1855-06-15T12:30:30-08:00', __LINE__);
 assertSame((string) \Delight\Temporal\Temporal::now('Europe/Vienna'), '1855-06-15T21:30:30+01:00', __LINE__);
@@ -68,6 +70,14 @@ assertSame((string) \Delight\Temporal\Temporal::fromTime(12, 30, 30), '1855-06-1
 assertSame((string) \Delight\Temporal\Temporal::fromTime(21, 30, 30, 'Europe/Vienna'), '1855-06-15T21:30:30+01:00', __LINE__);
 assertSame((string) \Delight\Temporal\Temporal::fromFormat('15.06.1855 12:30:30', 'd.m.Y H:i:s'), '1855-06-15T12:30:30-08:00', __LINE__);
 assertSame((string) \Delight\Temporal\Temporal::fromFormat('15.06.1855 21:30:30', 'd.m.Y H:i:s', 'Europe/Vienna'), '1855-06-15T21:30:30+01:00', __LINE__);
+
+assertSame(\Delight\Temporal\Temporal::fromDateTimeInterface($plainDateTime)->toUnixSeconds(), (int) $plainDateTime->format('U'), __LINE__);
+assertSame(\Delight\Temporal\Temporal::fromDateTimeInterface($plainDateTime)->plusSeconds(5)->toUnixSeconds(), (int) $plainDateTime->format('U') + 5, __LINE__);
+assertSame(\Delight\Temporal\Temporal::fromDateTimeInterface($plainDateTime)->minusSeconds(42)->toUnixSeconds(), (int) $plainDateTime->format('U') - 42, __LINE__);
+assertSame(\Delight\Temporal\Temporal::fromDateTimeInterface($plainDateTimeImmutable)->toUnixSeconds(), (int) $plainDateTimeImmutable->format('U'), __LINE__);
+assertSame(\Delight\Temporal\Temporal::fromDateTimeInterface($plainDateTimeImmutable)->plusSeconds(5)->toUnixSeconds(), (int) $plainDateTimeImmutable->format('U') + 5, __LINE__);
+assertSame(\Delight\Temporal\Temporal::fromDateTimeInterface($plainDateTimeImmutable)->minusSeconds(42)->toUnixSeconds(), (int) $plainDateTimeImmutable->format('U') - 42, __LINE__);
+
 assertSame((string) \Delight\Temporal\Temporal::yesterday()->plusDays(1), '1855-06-15T12:30:30-08:00', __LINE__);
 assertSame((string) \Delight\Temporal\Temporal::yesterday('Europe/Vienna')->plusDays(1), '1855-06-15T21:30:30+01:00', __LINE__);
 assertSame((string) \Delight\Temporal\Temporal::today(), '1855-06-15T12:30:30-08:00', __LINE__);
@@ -93,6 +103,20 @@ assertSame($moonLanding->toIso8601TimeBasic(), \Delight\Temporal\Temporal::fromI
 assertSame($moonLanding->toIso8601TimeBasic(), \Delight\Temporal\Temporal::fromIso8601TimeBasic('201804+0000')->toIso8601TimeBasic(), __LINE__);
 assertSame($moonLanding->toFormat('d.m.Y H:i:s'), '20.07.1969 13:18:04', __LINE__);
 assertSame($moonLanding->toFormat('d.m.Y H:i:s P'), '20.07.1969 13:18:04 -07:00', __LINE__);
+
+assertSame($smallStepForMan->toDateTime() instanceof \DateTime, true, __LINE__);
+assertSame($smallStepForMan->toDateTime() instanceof \DateTimeInterface, true, __LINE__);
+assertSame($smallStepForMan->toDateTime() instanceof \DateTimeImmutable, false, __LINE__);
+assertSame((int) $smallStepForMan->toDateTime()->format('U'), $smallStepForMan->toUnixSeconds(), __LINE__);
+assertSame((int) $smallStepForMan->toDateTime()->modify('+42 days')->format('U'), $smallStepForMan->plusDays(42)->toUnixSeconds(), __LINE__);
+assertSame((int) $smallStepForMan->toDateTime()->modify('-42 minutes')->format('U'), $smallStepForMan->minusMinutes(42)->toUnixSeconds(), __LINE__);
+assertSame($smallStepForMan->toDateTimeImmutable() instanceof \DateTime, false, __LINE__);
+assertSame($smallStepForMan->toDateTimeImmutable() instanceof \DateTimeInterface, true, __LINE__);
+assertSame($smallStepForMan->toDateTimeImmutable() instanceof \DateTimeImmutable, true, __LINE__);
+assertSame((int) $smallStepForMan->toDateTimeImmutable()->format('U'), $smallStepForMan->toUnixSeconds(), __LINE__);
+assertSame((int) $smallStepForMan->toDateTimeImmutable()->modify('+42 days')->format('U'), $smallStepForMan->plusDays(42)->toUnixSeconds(), __LINE__);
+assertSame((int) $smallStepForMan->toDateTimeImmutable()->modify('-42 minutes')->format('U'), $smallStepForMan->minusMinutes(42)->toUnixSeconds(), __LINE__);
+
 assertSame((string) $smallStepForMan, '1969-07-20T19:56:15-07:00', __LINE__);
 assertSame((string) $yesterday, '1855-06-14T12:30:30-08:00', __LINE__);
 assertSame((string) $quarterPastMidnight, '1855-06-15T00:15:00-08:00', __LINE__);

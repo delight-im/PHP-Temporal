@@ -805,6 +805,24 @@ final class Temporal {
 	}
 
 	/**
+	 * Returns the date and time as a {@see \DateTime} instance
+	 *
+	 * @return \DateTime
+	 */
+	public function toDateTime() {
+		return clone $this->dateTime;
+	}
+
+	/**
+	 * Returns the date and time as a {@see \DateTimeImmutable} instance
+	 *
+	 * @return \DateTimeImmutable
+	 */
+	public function toDateTimeImmutable() {
+		return \DateTimeImmutable::createFromMutable($this->dateTime);
+	}
+
+	/**
 	 * Returns the ordinal number for the decade
 	 *
 	 * @return int the ordinal number for the decade (e.g. `197` for year `1969`)
@@ -2040,6 +2058,24 @@ final class Temporal {
 	 */
 	public static function fromFormat($dateTime, $format, $timeZone = null) {
 		return self::createInstanceFromFormat($format, $dateTime, $timeZone);
+	}
+
+	/**
+	 * Creates a new instance from the supplied {@see \DateTimeInterface} instance
+	 *
+	 * @param \DateTimeInterface $dateTimeInterface the {@see \DateTime} or {@see \DateTimeImmutable} instance
+	 * @return self the new instance
+	 */
+	public static function fromDateTimeInterface(\DateTimeInterface $dateTimeInterface) {
+		$instance = new self();
+
+		$instance->dateTime = \DateTime::createFromFormat(
+			Unix::FORMAT_FLOAT,
+			$dateTimeInterface->format(Unix::FORMAT_FLOAT),
+			$dateTimeInterface->getTimezone()
+		);
+
+		return $instance;
 	}
 
 	/**
