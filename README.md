@@ -510,6 +510,22 @@ $duration->toIso8601();
 
 // or
 
+$duration->toAverageYears();
+// or
+$duration->toAverageMonths();
+// or
+$duration->toAverageWeeks();
+// or
+$duration->toAverageDays();
+// or
+$duration->toAverageHours();
+// or
+$duration->toAverageMinutes();
+// or
+$duration->toAverageSeconds();
+
+// or
+
 $duration = \Delight\Temporal\Duration::fromDateTime(2, 7, 15, 20, 45, 0);
 // or
 $duration = \Delight\Temporal\Duration::fromDateTime(4, 0, 7);
