@@ -176,6 +176,80 @@ final class Duration {
 	}
 
 	/**
+	 * Returns the duration as a number of (average) years
+	 *
+	 * @return float
+	 */
+	public function toAverageYears() {
+		return $this->toAverageSeconds() / 31556952;
+	}
+
+	/**
+	 * Returns the duration as a number of (average) months
+	 *
+	 * @return float
+	 */
+	public function toAverageMonths() {
+		return $this->toAverageSeconds() / 2629746;
+	}
+
+	/**
+	 * Returns the duration as a number of (average) weeks
+	 *
+	 * @return float
+	 */
+	public function toAverageWeeks() {
+		return $this->toAverageSeconds() / 604800;
+	}
+
+	/**
+	 * Returns the duration as a number of (average) days
+	 *
+	 * @return float
+	 */
+	public function toAverageDays() {
+		return $this->toAverageSeconds() / 86400;
+	}
+
+	/**
+	 * Returns the duration as a number of (average) hours
+	 *
+	 * @return float
+	 */
+	public function toAverageHours() {
+		return $this->toAverageSeconds() / 3600;
+	}
+
+	/**
+	 * Returns the duration as a number of (average) minutes
+	 *
+	 * @return float
+	 */
+	public function toAverageMinutes() {
+		return $this->toAverageSeconds() / 60;
+	}
+
+	/**
+	 * Returns the duration as a number of (average) seconds
+	 *
+	 * @return float
+	 */
+	public function toAverageSeconds() {
+		$seconds = 0;
+
+		$seconds += $this->years * 31556952;
+		$seconds += $this->months * 2629746;
+		$seconds += $this->weeks * 604800;
+		$seconds += $this->days * 86400;
+		$seconds += $this->hours * 3600;
+		$seconds += $this->minutes * 60;
+		$seconds += $this->seconds;
+		$seconds *= $this->sign;
+
+		return $seconds;
+	}
+
+	/**
 	 * Adds another duration to this duration
 	 *
 	 * @param self $other the duration to add
