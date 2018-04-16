@@ -950,6 +950,13 @@ assertSame(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->isPosit
 assertSame(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->isNegative(), true, __LINE__);
 assertSame(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->getSign(), -1, __LINE__);
 assertSame(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->toIso8601(), '-P3Y6M4DT12H30M5S', __LINE__);
+assertSame(\round(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->toAverageYears(), 5), -3.51238, __LINE__);
+assertSame(\round(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->toAverageMonths(), 5), -42.14853, __LINE__);
+assertSame(\round(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->toAverageWeeks(), 5), -183.26709, __LINE__);
+assertSame(\round(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->toAverageDays(), 5), -1282.86964, __LINE__);
+assertSame(\round(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->toAverageHours(), 5), -30788.87139, __LINE__);
+assertSame(\round(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->toAverageMinutes(), 5), -1847332.28333, __LINE__);
+assertSame(\round(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->toAverageSeconds(), 5), -110839937.0, __LINE__);
 assertSame(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->plus(\Delight\Temporal\Duration::fromDateTime(0, 22, 0, 0, 0, 96))->toIso8601(), '-P3Y28M4DT12H30M101S', __LINE__);
 assertSame(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->multipliedBy(3)->toIso8601(), '-P9Y18M12DT36H90M15S', __LINE__);
 assertSame(\Delight\Temporal\Duration::fromIso8601('-P3Y6M4DT12H30M5S')->multipliedBy(0)->toIso8601(), 'PT0S', __LINE__);
