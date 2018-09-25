@@ -431,15 +431,11 @@ final class Temporal {
 	 * @return self a new instance
 	 */
 	public function withDate($year = null, $month = null, $day = null) {
-		$copy = $this->copy();
-
-		$copy->dateTime->setDate(
-			$year !== null ? (int) $year : $copy->getYear(),
-			$month !== null ? (int) $month : $copy->getMonth(),
-			$day !== null ? (int) $day : $copy->getDay()
-		);
-
-		return $copy;
+		return new self($this->dateTime->setDate(
+			$year !== null ? (int) $year : $this->getYear(),
+			$month !== null ? (int) $month : $this->getMonth(),
+			$day !== null ? (int) $day : $this->getDay()
+		));
 	}
 
 	/**
@@ -481,15 +477,11 @@ final class Temporal {
 	 * @return self a new instance
 	 */
 	public function withTime($hour = null, $minute = null, $second = null) {
-		$copy = $this->copy();
-
-		$copy->dateTime->setTime(
-			$hour !== null ? (int) $hour : $copy->getHour(),
-			$minute !== null ? (int) $minute : $copy->getMinute(),
-			$second !== null ? (int) $second : $copy->getSecond()
-		);
-
-		return $copy;
+		return new self($this->dateTime->setTime(
+			$hour !== null ? (int) $hour : $this->getHour(),
+			$minute !== null ? (int) $minute : $this->getMinute(),
+			$second !== null ? (int) $second : $this->getSecond()
+		));
 	}
 
 	/**
@@ -810,7 +802,11 @@ final class Temporal {
 	 * @return \DateTime
 	 */
 	public function toDateTime() {
-		return clone $this->dateTime;
+		return 	\DateTime::createFromFormat(
+			Unix::FORMAT_FLOAT,
+			$this->dateTime->format(Unix::FORMAT_FLOAT),
+			$this->dateTime->getTimezone()
+		);
 	}
 
 	/**
@@ -819,7 +815,7 @@ final class Temporal {
 	 * @return \DateTimeImmutable
 	 */
 	public function toDateTimeImmutable() {
-		return \DateTimeImmutable::createFromMutable($this->dateTime);
+		return $this->dateTime;
 	}
 
 	/**
@@ -1815,7 +1811,7 @@ final class Temporal {
 	 * @return self a new instance
 	 */
 	public function withTimeZone($identifier = null) {
-		return $this->copy()->setTimeZone($identifier);
+		return new self($this->dateTime->setTimezone(self::makeTimeZone($identifier)));
 	}
 
 	/**
@@ -1829,15 +1825,10 @@ final class Temporal {
 
 	/**
 	 * Returns a copy of the current instance
-	 *
 	 * @return self a new instance
 	 */
 	public function copy() {
 		return clone $this;
-	}
-
-	public function __clone() {
-		$this->dateTime = clone $this->dateTime;
 	}
 
 	public function __toString() {
@@ -1854,11 +1845,8 @@ final class Temporal {
 		if (self::hasMockNow()) {
 			return self::getMockNow()->withTimeZone($timeZone);
 		}
-		else {
-			return self::createInstance(
-				new \DateTime(null, self::makeTimeZone($timeZone))
-			);
-		}
+
+		return new self(new \DateTime(null, self::makeTimeZone($timeZone)));
 	}
 
 	/**
@@ -2067,15 +2055,7 @@ final class Temporal {
 	 * @return self the new instance
 	 */
 	public static function fromDateTimeInterface(\DateTimeInterface $dateTimeInterface) {
-		$instance = new self();
-
-		$instance->dateTime = \DateTime::createFromFormat(
-			Unix::FORMAT_FLOAT,
-			$dateTimeInterface->format(Unix::FORMAT_FLOAT),
-			$dateTimeInterface->getTimezone()
-		);
-
-		return $instance;
+		return new self($dateTimeInterface);
 	}
 
 	/**
@@ -2176,18 +2156,12 @@ final class Temporal {
 	 * @return self a new instance
 	 */
 	private function withIso8601DurationApplied($duration, $dateTimeInstanceMethodName) {
-		$copy = $this->copy();
+		$copy = new self($this->dateTime->$dateTimeInstanceMethodName(new \DateInterval($duration)));
 
-		$copy->dateTime->$dateTimeInstanceMethodName(
-			new \DateInterval($duration)
-		);
-
-		if (Iso8601Duration::affectsMonthsOnly($duration)) {
-			// if the *actual* day does not exist in the *intended* month which causes PHP to calculate *wrongly*
-			if ($copy->getDay() !== $this->getDay()) {
-				// fix the calculation retroactively
-				$copy = $copy->withModification('last day of previous month');
-			}
+		// if the *actual* day does not exist in the *intended* month which causes PHP to calculate *wrongly*
+		// fix the calculation retroactively
+		if (Iso8601Duration::affectsMonthsOnly($duration) && $copy->getDay() !== $this->getDay()) {
+			return $copy->withModification('last day of previous month');
 		}
 
 		return $copy;
@@ -2202,18 +2176,13 @@ final class Temporal {
 	 * @return self a new instance
 	 */
 	private function withModification($modification) {
-		$copy = $this->copy();
-
-		$copy->dateTime->modify($modification);
-
-		return $copy;
+		return new self($this->dateTime->modify($modification));
 	}
 
 	/**
 	 * Changes the time zone to that with the specified identifier
 	 *
 	 * Passing `null` will set the default time zone
-	 *
 	 * @param string|null $identifier the identifier of the time zone to use (e.g. `Asia/Tokyo`) or `null`
 	 * @return self the modified instance
 	 */
@@ -2236,7 +2205,13 @@ final class Temporal {
 	}
 
 	/** Do not allow direct instantiation */
-	private function __construct() {}
+	private function __construct(\DateTimeInterface $dateTime) {
+		if (!$dateTime instanceof \DateTimeImmutable) {
+			$dateTime = \DateTimeImmutable::createFromMutable($dateTime);
+		}
+
+		$this->dateTime = $dateTime;
+	}
 
 	/**
 	 * Compares the two supplied instances with respect to the specified precision
@@ -2269,34 +2244,21 @@ final class Temporal {
 	 * @throws InvalidDateTimeFormatError if the date and/or time has been invalid with respect to the format
 	 */
 	private static function createInstanceFromFormat($format, $dateTime, $timeZone = null) {
-		$timeZoneInstance = self::makeTimeZone($timeZone);
-
-		$parsed = \DateTime::createFromFormat(
-			$format,
-			$dateTime,
-			$timeZoneInstance
-		);
-
-		if ($parsed === false) {
-			throw new InvalidDateTimeFormatError();
+		$parsed = \DateTime::createFromFormat($format, $dateTime, self::makeTimeZone($timeZone));
+		if ($parsed !== false) {
+			return (new self($parsed))->withTimeZone($timeZone);
 		}
-		else {
-			return self::createInstance($parsed)->setTimeZoneInstance($timeZoneInstance);
-		}
+
+		throw new InvalidDateTimeFormatError();
 	}
 
 	/**
 	 * Creates a new instance with the supplied object as the representation of date and/or time
-	 *
 	 * @param \DateTime $dateTime the representation of date and/or time
 	 * @return self the new instance
 	 */
 	private static function createInstance(\DateTime $dateTime) {
-		$instance = new self();
-
-		$instance->dateTime = $dateTime;
-
-		return $instance;
+		return new self($dateTime);
 	}
 
 	/**
@@ -2310,11 +2272,8 @@ final class Temporal {
 	 */
 	private static function makeTimeZone($identifier = null) {
 		try {
-			return new \DateTimeZone(
-				$identifier !== null ? $identifier : \date_default_timezone_get()
-			);
-		}
-		catch (\Exception $e) {
+			return new \DateTimeZone($identifier !== null ? $identifier : \date_default_timezone_get());
+		} catch (\Exception $e) {
 			throw new InvalidTimeZoneIdentifierError();
 		}
 	}
